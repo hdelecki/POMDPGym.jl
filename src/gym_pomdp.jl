@@ -51,8 +51,9 @@ torgb(o) = collect(colorview(RGB, permutedims(reinterpret.(N0f8, o), [3,1,2])))
 
 function init_mujoco_render()
     py"""
-    from mujoco_py import GlfwContext
-    GlfwContext(offscreen=True) 
+    from mujoco import GLContext
+    ctx = GLContext(100, 100)
+    ctx.make_current()
     """
 end
 
@@ -61,7 +62,7 @@ function render(mdp::GymPOMDP, s, a = nothing; kwargs...)
     render(mdp; kwargs...)
 end
 
-render(mdp::GymPOMDP; kwargs...) = torgb(render(mdp.env; mode=:rgb_array, kwargs...))
+render(mdp::GymPOMDP; kwargs...) = torgb(render(mdp.env; mode=:single_rgb_array, kwargs...))
 
 stack_obs(mdp, os) = length(os) == 1 ? os[1] : cat(os..., dims = mdp.frame_stack_dim)
 
